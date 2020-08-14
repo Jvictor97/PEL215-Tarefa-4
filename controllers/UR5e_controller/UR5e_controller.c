@@ -27,25 +27,19 @@
 
 enum State { WAITING, GRASPING, ROTATING, RELEASING, ROTATING_BACK };
 
-void multiplyMatrices(int firstMatrix[][4], int secondMatrix[][4], int mult[][4])
+void multiplyMatrices(double firstMatrix[][4], double secondMatrix[][4], double mult[][4])
 {
   int i, j, k;
-  // Initializing elements of matrix mult to 0.
-  for(i = 0; i < 2; ++i)
-  {
-    for(j = 0; j < 2; ++j)
-    {
-      mult[i][j] = 0;
+  
+  for(j = 0; j < 4; ++j) {
+    for(k = 0; k < 4; ++k) {
+      mult[k][j] = 0.0;
     }
   }
-
-  // Multiplying matrix firstMatrix and secondMatrix and storing in array mult.
-  for(i = 0; i < 2; ++i)
-  {
-    for(j = 0; j < 2; ++j)
-    {
-      for(k=0; k < 2; ++k)
-      {
+  
+  for(i = 0; i < 4; ++i) {
+    for(j = 0; j < 4; ++j) {
+      for(k = 0; k < 4; ++k) {
         mult[i][j] += firstMatrix[i][k] * secondMatrix[k][j];
       }
     }
@@ -56,12 +50,25 @@ double toRadians(double degrees) {
   return degrees * M_PI / 180.0;
 }
 
+double _cos(double rads) { 
+  if (abs(rads) == toRadians(90)) return 0.0;
+ 
+  return cos(rads);
+}
+
+double _sin(double rads) { 
+  if (abs(rads) == 0) return 0.0;
+ 
+  return sin(rads);
+}
+
+
 void buildMatrix(double matrix[][4], double theta, double alfa, double r, double d) {
   double H[4][4] = {
-    { cos(theta), -sin(theta)*cos(alfa),  sin(theta)*sin(alfa), r*cos(theta) },
-    { sin(theta),  cos(theta)*cos(alfa), -cos(theta)*sin(alfa), r*sin(theta) },
-    {          0,             sin(alfa),             cos(alfa),            d },
-    {          0,                     0,                     0,            1 }
+    { _cos(theta), -_sin(theta)*_cos(alfa),  _sin(theta)*_sin(alfa), r*_cos(theta) },
+    { _sin(theta),  _cos(theta)*_cos(alfa), -_cos(theta)*_sin(alfa), r*_sin(theta) },
+    {          0,               _sin(alfa),              _cos(alfa),             d },
+    {          0,                        0,                       0,             1 }
   };
   
   for (int i = 0; i < 4; i++) {
@@ -69,46 +76,88 @@ void buildMatrix(double matrix[][4], double theta, double alfa, double r, double
   }
 }
 
-double* denavitHartenberg(double* currentPosition, ) {
+void printMatrix(double matrix[][4]) {
+  for(int i = 0; i < 4; i++) {
+    for(int j = 0; j < 4; j++) {
+      printf("%.2f ", matrix[i][j]);
+    }
+    printf("\n");
+  }
   
+  printf("\n");
+}
+
+void denavitHartenberg(double* theta) {
+  double H1[4][4];
+  double H2[4][4];
+  double H3[4][4];
+  double H4[4][4];
+  double H5[4][4];
+  double H6[4][4];  
+  //                            theta            alfa        r        d  
+  buildMatrix(H1, toRadians(theta[0]),  toRadians(90),       0,  0.1625	);  
+  buildMatrix(H2, toRadians(theta[1]),            0.0,  -0.425,     0.0);
+  buildMatrix(H3, toRadians(theta[2]),            0.0, -0.3922,     0.0);
+  buildMatrix(H4, toRadians(theta[3]),  toRadians(90),     0.0,  0.1333);
+  buildMatrix(H5, toRadians(theta[4]), toRadians(-90),     0.0,  0.0997);
+  buildMatrix(H6, toRadians(theta[5]),            0.0,     0.0,  0.0996);
+  
+  double firstTempMatrix[4][4]  = { 
+    {0.0,0.0,0.0,0.0}, 
+    {0.0,0.0,0.0,0.0}, 
+    {0.0,0.0,0.0,0.0}, 
+    {0.0,0.0,0.0,0.0} 
+  };
+  
+  double secondTempMatrix[4][4]  = { 
+    {0.0,0.0,0.0,0.0}, 
+    {0.0,0.0,0.0,0.0}, 
+    {0.0,0.0,0.0,0.0}, 
+    {0.0,0.0,0.0,0.0} 
+  };
+  
+  multiplyMatrices(H1, H2, firstTempMatrix);  
+  multiplyMatrices(firstTempMatrix, H3, secondTempMatrix);
+  multiplyMatrices(secondTempMatrix, H4, firstTempMatrix);
+  multiplyMatrices(firstTempMatrix, H5, secondTempMatrix);
+  multiplyMatrices(secondTempMatrix, H6, firstTempMatrix);
+  
+  double initialPosition[4] = { 0.0, 0.0, 0.0, 1.0 };
+  double finalPosition[4]   = { 0.0, 0.0, 0.0, 1.0 };
+  
+
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      finalPosition[i] += firstTempMatrix[i][j] * initialPosition[j];
+    }
+  }
+
+  printf("Posicao Final - X: %f; Y: %f; Z: %f\n", 
+  finalPosition[0], finalPosition[1], finalPosition[2]);
 }
 
 int main(int argc, char **argv) {
   wb_robot_init();
   int i = 0;
  
-  const double target_positions[] = {-1.88, -2.14, -2.38, -1.51};
+  double target_positions[] = {90, -90, 0, 0, 0, 0};
   double speed = 1.0;
-  WbDeviceTag hand_motors[3];
-  hand_motors[0] = wb_robot_get_device("finger_1_joint_1");
-  hand_motors[1] = wb_robot_get_device("finger_2_joint_1");
-  hand_motors[2] = wb_robot_get_device("finger_middle_joint_1");
-  WbDeviceTag ur_motors[4];
-  ur_motors[0] = wb_robot_get_device("shoulder_lift_joint");
-  ur_motors[1] = wb_robot_get_device("elbow_joint");
-  ur_motors[2] = wb_robot_get_device("wrist_1_joint");
-  ur_motors[3] = wb_robot_get_device("wrist_2_joint");
-  for (i = 0; i < 4; ++i)
+
+  WbDeviceTag ur_motors[6];
+  ur_motors[0] = wb_robot_get_device("shoulder_pan_joint");
+  ur_motors[1] = wb_robot_get_device("shoulder_lift_joint");
+  ur_motors[2] = wb_robot_get_device("elbow_joint");
+  ur_motors[3] = wb_robot_get_device("wrist_1_joint");
+  ur_motors[4] = wb_robot_get_device("wrist_2_joint");
+  ur_motors[5] = wb_robot_get_device("wrist_3_joint");
+  
+  for (i = 0; i < 6; ++i)
     wb_motor_set_velocity(ur_motors[i], speed);
 
-  WbDeviceTag distance_sensor = wb_robot_get_device("distance sensor");
-  wb_distance_sensor_enable(distance_sensor, TIME_STEP);
-
-  WbDeviceTag position_sensor = wb_robot_get_device("wrist_1_joint_sensor");
-  wb_position_sensor_enable(position_sensor, TIME_STEP);
-   
- // double result[4][4]; 
- // buildMatrix(result, toRadians(90), toRadians(90), 0, 0.15185);  
+  denavitHartenberg(target_positions);
   
-  // for (int i = 0; i < 4; i++) {
-    // for (int j = 0; j < 4; j++) {
-      // printf("%.5f ", result[i][j]);
-    // }
-    // printf("\n");
-  // }
-  
-  for (i = 0; i < 4; ++i)
-    wb_motor_set_position(ur_motors[i], target_positions[i]);
+  for (i = 0; i < 6; ++i)
+    wb_motor_set_position(ur_motors[i], toRadians(target_positions[i]));
 
   wb_robot_cleanup();
   return 0;

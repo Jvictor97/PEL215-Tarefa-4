@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.561053821178406 0.7394436761250246 0.3720774913641232 4.812388955281955
-  position -3.063546871694621 5.500087172958693 1.1899399056190285
+  orientation 0.5666940577290864 0.7679996354772648 0.29838633487700333 5.070451039264791
+  position -1.1697648142431047 2.5419599563177573 1.3829404705607407
   exposure 1.7
 }
 TexturedBackground {
@@ -34,12 +34,6 @@ Floor {
 Wrench {
   translation -1.238859 0.71 0.5886
   rotation 0 1 0 2.094395
-}
-WoodenPalletStack {
-  translation 2.8 0 0.23
-  rotation 0 -1 0 1.5708
-  palletNumber 5
-  palletSize 0.8 0.11 1
 }
 Cabinet {
   translation -0.4 0 -2.47
@@ -119,54 +113,6 @@ SolidBox {
   }
 }
 SolidBox {
-  translation 1.015 0.45 0.0323
-  name "box(5)"
-  size 0.8 0.91 0.4
-  appearance GalvanizedMetal {
-  }
-}
-SolidBox {
-  translation 0.8 0.819996 -0.329556
-  rotation 1 0 0 1.047197
-  name "box(6)"
-  size 0.3 0.5 0.02
-  contactMaterial "slope"
-  appearance GalvanizedMetal {
-  }
-}
-SolidBox {
-  translation 0.96 0.837316 -0.339556
-  rotation -0.4472131236215756 0.7745972141192264 0.4472131236215756 -1.823476307179586
-  name "box(7)"
-  size 0.05 0.5 0.02
-  appearance GalvanizedMetal {
-  }
-}
-SolidBox {
-  translation 0.64 0.837316 -0.339556
-  rotation -0.4472131236215756 0.7745972141192264 0.4472131236215756 -1.823476307179586
-  name "box(8)"
-  size 0.05 0.5 0.02
-  appearance GalvanizedMetal {
-  }
-}
-SolidBox {
-  translation 0.64 0.583496 -0.239196
-  rotation 0.6947470600351803 -0.1861570160863869 -0.6947460600350939 2.773492
-  name "box(9)"
-  size 0.05 0.5 0.02
-  appearance GalvanizedMetal {
-  }
-}
-SolidBox {
-  translation 0.96 0.583496 -0.239196
-  rotation 0.6947470600351803 -0.1861570160863869 -0.6947460600350939 2.773492
-  name "box(10)"
-  size 0.05 0.5 0.02
-  appearance GalvanizedMetal {
-  }
-}
-SolidBox {
   translation 1.77 0.375 2.28
   rotation 0 1 0 3.1415919999999997
   name "box(4)"
@@ -188,16 +134,12 @@ UR5e {
   selfCollision FALSE
   toolSlot [
     Robotiq3fGripper {
-      translation 0 0.04 0
-    }
-    DistanceSensor {
-      translation 0 0.1 0
-      rotation 0 0 1 1.570796
+      rotation 0 -1 0 0
     }
   ]
 }
 ConveyorBelt {
-  translation 3.18 0 1.05
+  translation 3.18 0 1.54
   rotation 0 1 0 3.141592
   size 8 0.6 0.7
   appearance CorrugatedMetal {
@@ -223,9 +165,4 @@ ConveyorBelt {
   acceleration 0.012
   timer 90
   textureAnimation 0.016
-}
-PlasticCrate {
-  translation 0.22 0.25 -0.68
-  size 0.6 0.4 0.45
-  mass 1
 }

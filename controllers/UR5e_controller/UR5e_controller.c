@@ -25,8 +25,6 @@
 
 #define TIME_STEP 32
 
-enum State { WAITING, GRASPING, ROTATING, RELEASING, ROTATING_BACK };
-
 void multiplyMatrices(double firstMatrix[][4], double secondMatrix[][4], double mult[][4])
 {
   int i, j, k;
@@ -65,10 +63,10 @@ double _sin(double rads) {
 
 void buildMatrix(double matrix[][4], double theta, double alfa, double r, double d) {
   double H[4][4] = {
-    { _cos(theta), -_sin(theta)*_cos(alfa),  _sin(theta)*_sin(alfa), r*_cos(theta) },
-    { _sin(theta),  _cos(theta)*_cos(alfa), -_cos(theta)*_sin(alfa), r*_sin(theta) },
-    {          0,               _sin(alfa),              _cos(alfa),             d },
-    {          0,                        0,                       0,             1 }
+    { cos(theta), -sin(theta)*cos(alfa),  sin(theta)*sin(alfa), r*cos(theta) },
+    { sin(theta),  cos(theta)*cos(alfa), -cos(theta)*sin(alfa), r*sin(theta) },
+    {        0.0,             sin(alfa),             cos(alfa),            d },
+    {        0.0,                   0.0,                   0.0,          1.0 }
   };
   
   for (int i = 0; i < 4; i++) {
@@ -140,7 +138,7 @@ int main(int argc, char **argv) {
   wb_robot_init();
   int i = 0;
  
-  double target_positions[] = {90, -90, 0, 0, 0, 0};
+  double target_positions[] = {90, -90, -45, 0, 0, 0};
   double speed = 1.0;
 
   WbDeviceTag ur_motors[6];
@@ -156,8 +154,9 @@ int main(int argc, char **argv) {
 
   denavitHartenberg(target_positions);
   
-  for (i = 0; i < 6; ++i)
+  for (i = 0; i < 6; ++i) {
     wb_motor_set_position(ur_motors[i], toRadians(target_positions[i]));
+  }
 
   wb_robot_cleanup();
   return 0;

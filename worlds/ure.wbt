@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.5666940577290864 0.7679996354772648 0.29838633487700333 5.070451039264791
-  position -1.1697648142431047 2.5419599563177573 1.3829404705607407
+  orientation 0.8783635991695774 0.4472883317152859 0.16855425229053778 5.453881358867816
+  position -1.551477220810271 3.294553887283595 2.039280320303366
   exposure 1.7
 }
 TexturedBackground {
@@ -30,10 +30,6 @@ Floor {
   size 17 5
   appearance ThreadMetalPlate {
   }
-}
-Wrench {
-  translation -1.238859 0.71 0.5886
-  rotation 0 1 0 2.094395
 }
 Cabinet {
   translation -0.4 0 -2.47
@@ -129,12 +125,12 @@ FireExtinguisher {
 }
 UR5e {
   translation 0 0.61 0
-  rotation -0.5773502691896258 -0.5773502691896258 -0.5773502691896258 2.094395
+  rotation -3.3905013482585576e-09 0.7071062811861719 0.7071072811865696 3.14159
   controller "UR5e_controller"
   selfCollision FALSE
   toolSlot [
     Robotiq3fGripper {
-      rotation 0 -1 0 0
+      rotation 0 -1 0 1.57079
     }
   ]
 }
@@ -149,6 +145,7 @@ ConveyorBelt {
   }
   borderHeight 0
   speed 0.2
+  acceleration 0
   textureAnimation 0.016
 }
 ConveyorBelt {
@@ -162,7 +159,7 @@ ConveyorBelt {
   }
   borderHeight 0
   speed 0.062
-  acceleration 0.012
+  acceleration 0
   timer 90
   textureAnimation 0.016
 }
